@@ -1,5 +1,5 @@
 {
-  "name": "普通重型機車考照模擬系統",
+  "name": "考照模擬",
   "description": "提供 100% 忠實還原官方題庫的普通重型機車模擬考筆試系統，具備倒數計時、不確定題標記與題號快速導覽等功能。",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

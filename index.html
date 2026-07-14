@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>普通重型機車考照模擬系統</title>
+    <title>考照模擬</title>
     <!-- Local Offline Tailwind CSS Compiled via Vite -->
     <link rel="stylesheet" href="/src/index.css" />
     <!-- Tailwind CSS Play CDN -->
@@ -44,6 +44,16 @@
         background-color: #f59e0b;
         color: white;
         border-color: #d97706;
+      }
+      .grid-btn.correct {
+        background-color: #10b981;
+        color: white;
+        border-color: #059669;
+      }
+      .grid-btn.wrong {
+        background-color: #ef4444;
+        color: white;
+        border-color: #dc2626;
       }
       .grid-btn.active {
         outline: 3px solid #1e293b;
@@ -127,7 +137,7 @@
       <div class="max-w-6xl w-full mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2 sm:gap-4">
           <div class="bg-slate-900 text-white px-2 py-0.5 sm:px-3 sm:py-1 font-bold tracking-tighter text-xs sm:text-lg rounded-sm shrink-0">MTS-50</div>
-          <h1 class="text-xs sm:text-lg md:text-xl font-bold border-l pl-2 sm:pl-4 border-slate-300 text-slate-900 truncate">普通重型機車考照模擬系統</h1>
+          <h1 class="text-xs sm:text-lg md:text-xl font-bold border-l pl-2 sm:pl-4 border-slate-300 text-slate-900 truncate">考照模擬</h1>
         </div>
         <div id="header-stats" class="hidden flex items-center gap-3 sm:gap-6">
           <div class="hidden sm:flex items-center gap-1.5 bg-slate-100 px-2.5 py-1 rounded text-xs font-semibold text-slate-700">
@@ -177,6 +187,23 @@
           </div>
           
           <div class="space-y-4">
+            <!-- 即時解題/練習模式切換器 -->
+            <div class="bg-blue-50/40 border border-blue-100/70 rounded-xl p-3.5 flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2.5">
+                <div class="bg-blue-500/10 p-1.5 rounded-lg text-blue-600 shrink-0">
+                  <i data-lucide="help-circle" class="w-4 h-4"></i>
+                </div>
+                <div class="text-left">
+                  <p class="text-xs font-bold text-slate-800">即時解題 / 練習模式</p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">點選答案後會立即顯示正確解答</p>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-instant-feedback" class="sr-only peer">
+                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+
             <button id="btn-start-exam" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 sm:py-4 px-6 rounded-lg text-base sm:text-lg transition duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-sm">
               開始測驗
               <i data-lucide="play-circle" class="w-5 h-5"></i>
@@ -279,6 +306,21 @@
 
         <!-- 右側：1-50 題號快捷導覽面板 -->
         <aside class="bg-white rounded-lg border border-slate-200 p-4 sm:p-6 shadow-sm h-fit space-y-4 sm:space-y-6">
+          <!-- 即時解題模式側邊切換 -->
+          <div class="bg-blue-50/40 border border-blue-100/70 rounded-xl p-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-4 h-4 text-blue-600 shrink-0"></i>
+              <div class="text-left">
+                <p class="text-xs font-bold text-slate-800">即時解題模式</p>
+                <p class="text-[10px] text-slate-400">作答後即顯示答案</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="toggle-instant-feedback-aside" class="sr-only peer">
+              <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+
           <div>
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex justify-between items-center">
               <span>題目導覽</span>
@@ -385,7 +427,7 @@
     <!-- 底部版權 -->
     <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-400">
       <div class="max-w-6xl mx-auto">
-        <p>普通重型機車考照模擬系統 © 2026. 數據依據中華民國交通部最新機車駕駛人筆試題庫製作。</p>
+        <p>考照模擬 © 2026. 數據依據中華民國交通部最新機車駕駛人筆試題庫製作。</p>
       </div>
     </footer>
 
@@ -5453,6 +5495,7 @@
       let timerInterval = null;
       let secondsRemaining = 3000; // 50分鐘 = 3000秒
       let totalDurationSeconds = 3000;
+      let isInstantFeedbackMode = false;
 
       // 元素快取
       const welcomeScreen = document.getElementById('welcome-screen');
@@ -5496,6 +5539,10 @@
       
       const timeoutAlertModal = document.getElementById('timeout-alert-modal');
       const btnTimeoutConfirm = document.getElementById('btn-timeout-confirm');
+
+      // 即時解題模式切換器
+      const toggleInstantFeedback = document.getElementById('toggle-instant-feedback');
+      const toggleInstantFeedbackAside = document.getElementById('toggle-instant-feedback-aside');
 
       // 彈出視窗輔助控制函數
       function showModal(modalEl) {
@@ -5668,6 +5715,11 @@
         welcomeScreen.classList.add('hidden');
         examScreen.classList.remove('hidden');
         headerStats.classList.remove('hidden');
+
+        // 同步側邊欄的即時解題切換狀態
+        if (toggleInstantFeedbackAside) {
+          toggleInstantFeedbackAside.checked = isInstantFeedbackMode;
+        }
         
         // 生成導覽面板與載入第一題
         generateNavigationGrid();
@@ -5771,6 +5823,33 @@
         if (btnStartWrongExam) {
           btnStartWrongExam.addEventListener('click', startWrongQuestionsExam);
         }
+
+        // 即時解題模式切換器綁定
+        if (toggleInstantFeedback) {
+          toggleInstantFeedback.addEventListener('change', (e) => {
+            isInstantFeedbackMode = e.target.checked;
+            if (toggleInstantFeedbackAside) {
+              toggleInstantFeedbackAside.checked = isInstantFeedbackMode;
+            }
+            // 如果測驗正在進行中，則即時重載題目以套用樣式
+            if (!examScreen.classList.contains('hidden')) {
+              loadQuestion(currentIndex);
+            }
+          });
+        }
+
+        if (toggleInstantFeedbackAside) {
+          toggleInstantFeedbackAside.addEventListener('change', (e) => {
+            isInstantFeedbackMode = e.target.checked;
+            if (toggleInstantFeedback) {
+              toggleInstantFeedback.checked = isInstantFeedbackMode;
+            }
+            // 即時重載題目以套用樣式
+            if (!examScreen.classList.contains('hidden')) {
+              loadQuestion(currentIndex);
+            }
+          });
+        }
       });
 
       // Fisher-Yates 洗牌演算法
@@ -5805,6 +5884,11 @@
         welcomeScreen.classList.add('hidden');
         examScreen.classList.remove('hidden');
         headerStats.classList.remove('hidden');
+
+        // 同步側邊欄的即時解題切換狀態
+        if (toggleInstantFeedbackAside) {
+          toggleInstantFeedbackAside.checked = isInstantFeedbackMode;
+        }
 
         // 生成答案卡與載入第一題
         generateNavigationGrid();
@@ -5868,12 +5952,19 @@
         updateAnsweredCount();
       }
 
-      // 更新單個題號按鈕的外觀
-      function setNavButtonState(btn, isMarked, userAnswer) {
+       // 更新單個題號按鈕的外觀
+      function setNavButtonState(btn, isMarked, userAnswer, q) {
         // 先移除所有狀態樣式
         btn.className = 'grid-btn';
 
-        if (isMarked) {
+        if (isInstantFeedbackMode && userAnswer !== null && q) {
+          const isCorrect = userAnswer === q.answer;
+          if (isCorrect) {
+            btn.classList.add('correct');
+          } else {
+            btn.classList.add('wrong');
+          }
+        } else if (isMarked) {
           // 標記不確定
           btn.classList.add('flagged');
         } else if (userAnswer !== null) {
@@ -5901,7 +5992,7 @@
           const btn = document.getElementById(`nav-btn-${i}`);
           if (btn) {
             const targetQ = activeQuestions[i];
-            setNavButtonState(btn, targetQ.isMarked, targetQ.userAnswer);
+            setNavButtonState(btn, targetQ.isMarked, targetQ.userAnswer, targetQ);
           }
         }
 
@@ -5923,28 +6014,98 @@
 
         // 載入選項
         optionsGroup.innerHTML = '';
+        const isAnswered = q.userAnswer !== null;
+
         q.options.forEach((optText, optIdx) => {
           const optValue = optIdx + 1; // 1, 2, 3
           const isSelected = q.userAnswer === optValue;
+          const isCorrect = q.answer === optValue;
           
           const optButton = document.createElement('button');
           optButton.type = 'button';
-          optButton.className = isSelected ? 'option-btn selected' : 'option-btn';
           
-          optButton.innerHTML = `
-            <span class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center mr-4 shrink-0 font-bold ${
-              isSelected ? 'border-blue-600 bg-blue-600 text-white' : 'bg-white text-slate-600'
-            }">${optIdx + 1}</span>
-            <span class="flex-1">${optText}</span>
-          `;
-          
-          // 點擊事件：選擇該選項
-          optButton.addEventListener('click', () => {
-            selectOption(optValue);
-          });
+          if (isInstantFeedbackMode && isAnswered) {
+            // 即時解題模式且已作答
+            if (isCorrect) {
+              // 正確選項
+              optButton.className = 'option-btn border-emerald-500 bg-emerald-50/70 text-emerald-800 font-medium cursor-default shadow-sm';
+              optButton.innerHTML = `
+                <span class="w-8 h-8 rounded-full bg-emerald-500 border border-emerald-500 text-white flex items-center justify-center mr-4 shrink-0 font-bold">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                </span>
+                <span class="flex-1">${optText}</span>
+                <span class="text-xs text-emerald-600 font-bold flex items-center gap-0.5 ml-2">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 正確答案
+                </span>
+              `;
+            } else if (isSelected) {
+              // 選錯選項
+              optButton.className = 'option-btn border-red-500 bg-red-50/70 text-red-800 font-medium cursor-default shadow-sm';
+              optButton.innerHTML = `
+                <span class="w-8 h-8 rounded-full bg-red-500 border border-red-500 text-white flex items-center justify-center mr-4 shrink-0 font-bold">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </span>
+                <span class="flex-1">${optText}</span>
+                <span class="text-xs text-red-600 font-bold flex items-center gap-0.5 ml-2">
+                  <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> 您的選擇
+                </span>
+              `;
+            } else {
+              // 其他未選中選項
+              optButton.className = 'option-btn opacity-50 cursor-default';
+              optButton.innerHTML = `
+                <span class="w-8 h-8 rounded-full border border-slate-300 bg-white text-slate-400 flex items-center justify-center mr-4 shrink-0 font-bold">${optIdx + 1}</span>
+                <span class="flex-1 text-slate-500">${optText}</span>
+              `;
+            }
+            optButton.disabled = true;
+          } else {
+            // 一般模式或尚未作答
+            optButton.className = isSelected ? 'option-btn selected' : 'option-btn';
+            optButton.innerHTML = `
+              <span class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center mr-4 shrink-0 font-bold ${
+                isSelected ? 'border-blue-600 bg-blue-600 text-white' : 'bg-white text-slate-600'
+              }">${optIdx + 1}</span>
+              <span class="flex-1">${optText}</span>
+            `;
+            
+            // 點擊事件：選擇該選項
+            optButton.addEventListener('click', () => {
+              selectOption(optValue);
+            });
+          }
           
           optionsGroup.appendChild(optButton);
         });
+
+        // 即時解題模式且已作答時，在下方額外加載精美解析提示卡
+        if (isInstantFeedbackMode && isAnswered) {
+          const feedbackCard = document.createElement('div');
+          const isUserCorrect = q.userAnswer === q.answer;
+          feedbackCard.className = `p-4 rounded-xl border flex flex-col gap-2 ${
+            isUserCorrect 
+              ? 'bg-emerald-50/50 border-emerald-200/60 text-emerald-900 shadow-sm' 
+              : 'bg-red-50/50 border-red-200/60 text-red-900 shadow-sm'
+          }`;
+          
+          feedbackCard.innerHTML = `
+            <div class="flex items-center gap-1.5">
+              ${isUserCorrect 
+                ? '<span class="flex items-center gap-1 text-emerald-700 font-bold text-sm"><i data-lucide="smile" class="w-4 h-4 text-emerald-600"></i> 恭喜答對！</span>' 
+                : '<span class="flex items-center gap-1 text-red-700 font-bold text-sm"><i data-lucide="frown" class="w-4 h-4 text-red-600"></i> 答錯了！別氣餒！</span>'
+              }
+            </div>
+            <p class="text-sm text-slate-700 leading-relaxed">
+              正確答案是第 <span class="font-bold text-base text-emerald-600 mx-0.5">${q.answer}</span> 個選項：
+              <span class="font-bold underline decoration-emerald-500/30 underline-offset-4">${q.options[q.answer - 1]}</span>
+            </p>
+            <div class="text-[10px] text-slate-400 font-medium flex items-center gap-1 mt-1 border-t border-slate-200/50 pt-2">
+              <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+              即時解析：請仔細確認題目與標準答案，多練習可加深印象。
+            </div>
+          `;
+          optionsGroup.appendChild(feedbackCard);
+        }
 
         // 重新渲染 Lucide 圖示
         lucide.createIcons();
@@ -5991,7 +6152,7 @@
         // 同步更新導覽按鈕顏色
         const navBtn = document.getElementById(`nav-btn-${currentIndex}`);
         if (navBtn) {
-          setNavButtonState(navBtn, q.isMarked, q.userAnswer);
+          setNavButtonState(navBtn, q.isMarked, q.userAnswer, q);
         }
 
         // 更新未答/已答統計
@@ -6009,7 +6170,7 @@
         // 同步更新導覽按鈕顏色
         const navBtn = document.getElementById(`nav-btn-${currentIndex}`);
         if (navBtn) {
-          setNavButtonState(navBtn, q.isMarked, q.userAnswer);
+          setNavButtonState(navBtn, q.isMarked, q.userAnswer, q);
         }
       });
 
