@@ -136,8 +136,7 @@
     <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-sm sticky top-0 z-50">
       <div class="max-w-6xl w-full mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2 sm:gap-4">
-          <div class="bg-slate-900 text-white px-2 py-0.5 sm:px-3 sm:py-1 font-bold tracking-tighter text-xs sm:text-lg rounded-sm shrink-0">MTS-50</div>
-          <h1 class="text-xs sm:text-lg md:text-xl font-bold border-l pl-2 sm:pl-4 border-slate-300 text-slate-900 truncate">考照模擬</h1>
+          <h1 class="text-xs sm:text-lg md:text-xl font-bold text-slate-900 truncate">考照模擬</h1>
         </div>
         <div id="header-stats" class="hidden flex items-center gap-3 sm:gap-6">
           <div class="hidden sm:flex items-center gap-1.5 bg-slate-100 px-2.5 py-1 rounded text-xs font-semibold text-slate-700">
@@ -146,7 +145,7 @@
           </div>
           <div class="text-right flex items-center gap-2">
             <div>
-              <p class="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold tracking-wider">剩餘時間</p>
+              <p id="timer-label" class="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold tracking-wider">剩餘時間</p>
               <p id="timer-display" class="text-lg sm:text-2xl font-mono font-bold text-red-600">50:00</p>
             </div>
           </div>
@@ -180,34 +179,60 @@
                 <span class="font-bold text-blue-600">普通重型機車 (115年最新)</span>
               </div>
               
-              <div class="bg-blue-50 p-3 sm:p-4 rounded-lg text-xs sm:text-sm text-blue-800 border border-blue-100/50">
-                本測驗共 50 題，及格標準為 85 分。測驗時間 50 分鐘，時間到將自動交卷。
+              <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl text-xs sm:text-sm text-slate-600 border border-slate-100/80 space-y-2">
+                <p class="font-bold text-slate-800 flex items-center gap-1.5 text-xs sm:text-sm">
+                  <i data-lucide="info" class="w-4 h-4 text-blue-500"></i>
+                  測驗模式說明
+                </p>
+                <p class="leading-relaxed">
+                  1. <span class="font-bold text-blue-600">照順序練習 (1 ~ 806 題)</span>：無時間限制與倒數壓力，可依序逐題作答、練習並精熟全部題庫。
+                </p>
+                <p class="leading-relaxed">
+                  2. <span class="font-bold text-indigo-600">隨機模擬考 (50 題)</span>：限時 50 分鐘，從完整題庫中隨機挑選 50 題，及格分數為 85 分。
+                </p>
               </div>
             </div>
           </div>
           
           <div class="space-y-4">
-            <!-- 即時解題/練習模式切換器 -->
-            <div class="bg-blue-50/40 border border-blue-100/70 rounded-xl p-3.5 flex items-center justify-between mb-2">
-              <div class="flex items-center gap-2.5">
-                <div class="bg-blue-500/10 p-1.5 rounded-lg text-blue-600 shrink-0">
-                  <i data-lucide="help-circle" class="w-4 h-4"></i>
-                </div>
-                <div class="text-left">
-                  <p class="text-xs font-bold text-slate-800">即時解題 / 練習模式</p>
-                  <p class="text-[10px] text-slate-400 mt-0.5">點選答案後會立即顯示正確解答</p>
-                </div>
+            <!-- 已自動啟用即時解題模式 -->
+            <div class="bg-emerald-50/60 border border-emerald-100/70 rounded-xl p-3.5 flex items-center gap-3">
+              <div class="bg-emerald-500/10 p-1.5 rounded-lg text-emerald-600 shrink-0">
+                <i data-lucide="check-circle" class="w-4.5 h-4.5"></i>
               </div>
-              <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                <input type="checkbox" id="toggle-instant-feedback" class="sr-only peer">
-                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
+              <div class="text-left">
+                <p class="text-xs font-bold text-emerald-800">已啟用即時解題模式</p>
+                <p class="text-[10px] text-slate-500 mt-0.5">點選答案後會立即顯示正確解答與標準解析卡，不須手動開關。</p>
+              </div>
             </div>
 
-            <button id="btn-start-exam" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 sm:py-4 px-6 rounded-lg text-base sm:text-lg transition duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-sm">
-              開始測驗
-              <i data-lucide="play-circle" class="w-5 h-5"></i>
-            </button>
+            <div class="space-y-3 pt-1">
+              <button id="btn-start-sequential" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 sm:py-4 px-5 rounded-xl transition duration-150 flex items-center justify-between gap-3 cursor-pointer shadow-sm group">
+                <div class="flex items-center gap-3 text-left">
+                  <div class="bg-white/15 p-2 rounded-lg text-white">
+                    <i data-lucide="list-ordered" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-white">1. 照順序練習 (1 ~ 806 題)</p>
+                    <p class="text-[10px] text-blue-100 font-normal mt-0.5">循序漸進練習 1 ~ 806 題，無時間限制</p>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 transition-transform group-hover:translate-x-1 shrink-0"></i>
+              </button>
+              
+              <button id="btn-start-random" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 sm:py-4 px-5 rounded-xl transition duration-150 flex items-center justify-between gap-3 cursor-pointer shadow-sm group">
+                <div class="flex items-center gap-3 text-left">
+                  <div class="bg-white/15 p-2 rounded-lg text-white">
+                    <i data-lucide="shuffle" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-white">2. 隨機模擬考 (隨機 50 題)</p>
+                    <p class="text-[10px] text-indigo-100 font-normal mt-0.5">模擬正式考試，限時 50 分鐘，85分及格</p>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 transition-transform group-hover:translate-x-1 shrink-0"></i>
+              </button>
+            </div>
             
             <!-- 錯題複習本區塊 -->
             <div class="pt-4 border-t border-slate-100">
@@ -257,7 +282,7 @@
               <!-- 題目頂部資訊 -->
               <div class="flex items-baseline gap-2 mb-3 sm:mb-4 border-b border-slate-100 pb-3 sm:pb-4">
                 <span id="current-question-num" class="text-3xl sm:text-4xl font-black text-blue-600">01</span>
-                <span class="text-slate-400 font-bold uppercase text-xs sm:text-sm">/ 50</span>
+                <span id="total-question-num" class="text-slate-400 font-bold uppercase text-xs sm:text-sm">/ 50</span>
                 <span id="question-source-id" class="text-[10px] sm:text-xs text-slate-400 font-mono ml-auto">
                   題庫原始題號：#1
                 </span>
@@ -306,19 +331,13 @@
 
         <!-- 右側：1-50 題號快捷導覽面板 -->
         <aside class="bg-white rounded-lg border border-slate-200 p-4 sm:p-6 shadow-sm h-fit space-y-4 sm:space-y-6">
-          <!-- 即時解題模式側邊切換 -->
-          <div class="bg-blue-50/40 border border-blue-100/70 rounded-xl p-3 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <i data-lucide="help-circle" class="w-4 h-4 text-blue-600 shrink-0"></i>
-              <div class="text-left">
-                <p class="text-xs font-bold text-slate-800">即時解題模式</p>
-                <p class="text-[10px] text-slate-400">作答後即顯示答案</p>
-              </div>
+          <!-- 已啟用即時解題狀態 -->
+          <div class="bg-emerald-50/60 border border-emerald-100/70 rounded-xl p-3 flex items-center gap-2.5">
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+            <div class="text-left">
+              <p class="text-xs font-bold text-emerald-800">已啟用即時解題</p>
+              <p class="text-[10px] text-slate-500">作答後即時核對與解析</p>
             </div>
-            <label class="relative inline-flex items-center cursor-pointer shrink-0">
-              <input type="checkbox" id="toggle-instant-feedback-aside" class="sr-only peer">
-              <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
           </div>
 
           <div>
@@ -326,9 +345,11 @@
               <span>題目導覽</span>
               <span class="text-xs font-semibold text-slate-500" id="answered-count-badge">已答: 0 / 50</span>
             </h3>
-            <!-- 題號網格 (50 題) -->
-            <div id="nav-grid" class="grid grid-cols-5 gap-2">
-              <!-- 1-50 按鈕將由 JS 動態生成 -->
+            <!-- 題號網格 (滾動容器支援多達 806 題) -->
+            <div class="max-h-[280px] overflow-y-auto pr-1">
+              <div id="nav-grid" class="grid grid-cols-5 gap-1.5">
+                <!-- 按鈕將由 JS 動態生成 -->
+              </div>
             </div>
           </div>
 
@@ -5494,8 +5515,10 @@
       let currentIndex = 0;
       let timerInterval = null;
       let secondsRemaining = 3000; // 50分鐘 = 3000秒
+      let secondsElapsed = 0; // 用於順序練習計時的秒數
       let totalDurationSeconds = 3000;
-      let isInstantFeedbackMode = false;
+      let isInstantFeedbackMode = true; // 預設即時解題為啟用
+      let examMode = 'random'; // 'random' (隨機模擬考) 或 'sequential' (照順序練習) 或 'wrong' (錯題複習)
 
       // 元素快取
       const welcomeScreen = document.getElementById('welcome-screen');
@@ -5506,6 +5529,7 @@
       const timerDisplay = document.getElementById('timer-display');
       
       const qNumSpan = document.getElementById('current-question-num');
+      const qTotalNumSpan = document.getElementById('total-question-num');
       const qSourceIdSpan = document.getElementById('question-source-id');
       const trafficSignContainer = document.getElementById('traffic-sign-container');
       const questionText = document.getElementById('question-text');
@@ -5515,7 +5539,8 @@
       const btnNext = document.getElementById('btn-next');
       const btnMark = document.getElementById('btn-mark');
       const btnSubmit = document.getElementById('btn-submit');
-      const btnStartExam = document.getElementById('btn-start-exam');
+      const btnStartSequential = document.getElementById('btn-start-sequential');
+      const btnStartRandom = document.getElementById('btn-start-random');
       const btnRestart = document.getElementById('btn-restart');
       
       const navGrid = document.getElementById('nav-grid');
@@ -5539,10 +5564,6 @@
       
       const timeoutAlertModal = document.getElementById('timeout-alert-modal');
       const btnTimeoutConfirm = document.getElementById('btn-timeout-confirm');
-
-      // 即時解題模式切換器
-      const toggleInstantFeedback = document.getElementById('toggle-instant-feedback');
-      const toggleInstantFeedbackAside = document.getElementById('toggle-instant-feedback-aside');
 
       // 彈出視窗輔助控制函數
       function showModal(modalEl) {
@@ -5757,11 +5778,25 @@
           const item = document.createElement('div');
           item.className = 'flex items-center justify-between bg-slate-50 border border-slate-100 hover:border-slate-200 p-3.5 rounded-lg transition';
           
+          const mode = record.mode || 'random';
+          let modeLabel = '隨機模擬考';
+          let modeBadgeClass = 'bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-1.5 py-0.5 rounded font-bold';
+          if (mode === 'sequential') {
+            modeLabel = '順序練習';
+            modeBadgeClass = 'bg-blue-50 text-blue-700 border border-blue-200 text-[10px] px-1.5 py-0.5 rounded font-bold';
+          } else if (mode === 'wrong') {
+            modeLabel = '錯題複習';
+            modeBadgeClass = 'bg-rose-50 text-rose-700 border border-rose-200 text-[10px] px-1.5 py-0.5 rounded font-bold';
+          }
+
           const isPassed = record.isPassed;
-          const badgeClass = isPassed 
+          const isPassedOrSequential = isPassed || mode === 'sequential' || mode === 'wrong';
+          const badgeClass = isPassedOrSequential 
             ? 'bg-green-50 text-green-700 border border-green-200 text-[10px] px-1.5 py-0.5 rounded font-bold' 
             : 'bg-red-50 text-red-700 border border-red-200 text-[10px] px-1.5 py-0.5 rounded font-bold';
-          const scoreCircleClass = isPassed
+          const badgeText = mode === 'sequential' || mode === 'wrong' ? '完成' : (isPassed ? '及格' : '不及格');
+
+          const scoreCircleClass = isPassedOrSequential
             ? 'w-10 h-10 rounded-full flex flex-col items-center justify-center font-black text-xs text-white bg-green-500 shrink-0'
             : 'w-10 h-10 rounded-full flex flex-col items-center justify-center font-black text-xs text-white bg-red-500 shrink-0';
 
@@ -5773,9 +5808,10 @@
               </div>
               
               <div class="min-w-0">
-                <div class="flex items-center gap-2 flex-wrap justify-start">
+                <div class="flex items-center gap-1.5 flex-wrap justify-start">
                   <span class="text-[10px] text-slate-400 font-mono">${record.date}</span>
-                  <span class="${badgeClass}">${isPassed ? '及格' : '不及格'}</span>
+                  <span class="${modeBadgeClass}">${modeLabel}</span>
+                  <span class="${badgeClass}">${badgeText}</span>
                 </div>
                 <div class="text-[11px] text-slate-500 mt-1 truncate">
                   時間: <span class="font-medium text-slate-700">${record.timeSpent}</span> | 答對: <span class="font-bold text-green-600">${record.correctCount}</span> | 答錯: <span class="font-bold text-red-600">${record.wrongCount}</span>
@@ -5824,32 +5860,6 @@
           btnStartWrongExam.addEventListener('click', startWrongQuestionsExam);
         }
 
-        // 即時解題模式切換器綁定
-        if (toggleInstantFeedback) {
-          toggleInstantFeedback.addEventListener('change', (e) => {
-            isInstantFeedbackMode = e.target.checked;
-            if (toggleInstantFeedbackAside) {
-              toggleInstantFeedbackAside.checked = isInstantFeedbackMode;
-            }
-            // 如果測驗正在進行中，則即時重載題目以套用樣式
-            if (!examScreen.classList.contains('hidden')) {
-              loadQuestion(currentIndex);
-            }
-          });
-        }
-
-        if (toggleInstantFeedbackAside) {
-          toggleInstantFeedbackAside.addEventListener('change', (e) => {
-            isInstantFeedbackMode = e.target.checked;
-            if (toggleInstantFeedback) {
-              toggleInstantFeedback.checked = isInstantFeedbackMode;
-            }
-            // 即時重載題目以套用樣式
-            if (!examScreen.classList.contains('hidden')) {
-              loadQuestion(currentIndex);
-            }
-          });
-        }
       });
 
       // Fisher-Yates 洗牌演算法
@@ -5862,77 +5872,133 @@
         return copy;
       }
 
-      // 開始考試
-      btnStartExam.addEventListener('click', () => {
-        // 從 537 題中隨機抽取 50 題
-        const shuffledAll = shuffle(questionBank);
-        activeQuestions = shuffledAll.slice(0, 50).map((q, idx) => ({
-          ...q,
-          index: idx, // 考試中的題號（0-49）
-          userAnswer: null,
-          isMarked: false
-        }));
+      // 開始順序練習
+      if (btnStartSequential) {
+        btnStartSequential.addEventListener('click', () => {
+          examMode = 'sequential';
+          
+          // 順序練習 1-806 題
+          activeQuestions = questionBank.map((q, idx) => ({
+            ...q,
+            index: idx,
+            userAnswer: null,
+            isMarked: false
+          }));
 
-        // 重設狀態
-        currentIndex = 0;
-        secondsRemaining = 3000;
-        
-        // 開始倒數計時
-        startTimer();
+          // 重設狀態
+          currentIndex = 0;
+          secondsElapsed = 0;
+          
+          // 啟動計時器
+          startTimer();
 
-        // 顯示/隱藏區塊
-        welcomeScreen.classList.add('hidden');
-        examScreen.classList.remove('hidden');
-        headerStats.classList.remove('hidden');
+          // 顯示/隱藏區塊
+          welcomeScreen.classList.add('hidden');
+          examScreen.classList.remove('hidden');
+          headerStats.classList.remove('hidden');
 
-        // 同步側邊欄的即時解題切換狀態
-        if (toggleInstantFeedbackAside) {
-          toggleInstantFeedbackAside.checked = isInstantFeedbackMode;
-        }
+          // 生成答案卡與載入第一題
+          generateNavigationGrid();
+          loadQuestion(0);
+        });
+      }
 
-        // 生成答案卡與載入第一題
-        generateNavigationGrid();
-        loadQuestion(0);
-      });
+      // 開始隨機模擬考
+      if (btnStartRandom) {
+        btnStartRandom.addEventListener('click', () => {
+          examMode = 'random';
+          
+          // 隨機抽取 50 題
+          const shuffledAll = shuffle(questionBank);
+          activeQuestions = shuffledAll.slice(0, 50).map((q, idx) => ({
+            ...q,
+            index: idx,
+            userAnswer: null,
+            isMarked: false
+          }));
 
-      // 啟動倒數計時器
+          // 重設狀態
+          currentIndex = 0;
+          secondsRemaining = 3000;
+          totalDurationSeconds = 3000;
+          
+          // 啟動計時器
+          startTimer();
+
+          // 顯示/隱藏區塊
+          welcomeScreen.classList.add('hidden');
+          examScreen.classList.remove('hidden');
+          headerStats.classList.remove('hidden');
+
+          // 生成答案卡與載入第一題
+          generateNavigationGrid();
+          loadQuestion(0);
+        });
+      }
+
+      // 啟動計時器
       function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
         
+        secondsElapsed = 0; // 重置計時
         updateTimerDisplay();
         
         timerInterval = setInterval(() => {
-          secondsRemaining--;
-          updateTimerDisplay();
-          
-          if (secondsRemaining <= 0) {
-            clearInterval(timerInterval);
-            showModal(timeoutAlertModal);
+          if (examMode === 'sequential') {
+            secondsElapsed++;
+            updateTimerDisplay();
+          } else {
+            secondsRemaining--;
+            updateTimerDisplay();
+            
+            if (secondsRemaining <= 0) {
+              clearInterval(timerInterval);
+              showModal(timeoutAlertModal);
+            }
           }
         }, 1000);
       }
 
       // 更新時間顯示
       function updateTimerDisplay() {
-        const minutes = Math.floor(secondsRemaining / 60);
-        const seconds = secondsRemaining % 60;
-        const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        timerDisplay.textContent = formattedTime;
-
-        // 當時間少於 5 分鐘時（300秒），計時器高亮警示
-        if (secondsRemaining < 300) {
-          timerDisplay.parentElement.classList.remove('bg-red-50', 'text-red-600');
-          timerDisplay.parentElement.classList.add('bg-red-500', 'text-white');
+        const timerLabel = document.getElementById('timer-label');
+        if (examMode === 'sequential') {
+          if (timerLabel) timerLabel.textContent = '練習時間';
+          const hours = Math.floor(secondsElapsed / 3600);
+          const minutes = Math.floor((secondsElapsed % 3600) / 60);
+          const seconds = secondsElapsed % 60;
+          let formattedTime = '';
+          if (hours > 0) {
+            formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          } else {
+            formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          }
+          timerDisplay.textContent = formattedTime;
+          timerDisplay.className = 'text-lg sm:text-2xl font-mono font-bold text-blue-600';
+          timerDisplay.parentElement.className = 'text-right flex items-center gap-2 bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg';
         } else {
-          timerDisplay.parentElement.classList.remove('bg-red-500', 'text-white');
-          timerDisplay.parentElement.classList.add('bg-red-50', 'text-red-600');
+          if (timerLabel) timerLabel.textContent = '剩餘時間';
+          const minutes = Math.floor(secondsRemaining / 60);
+          const seconds = secondsRemaining % 60;
+          const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          timerDisplay.textContent = formattedTime;
+          timerDisplay.className = 'text-lg sm:text-2xl font-mono font-bold';
+
+          // 當時間少於 5 分鐘時（300秒），計時器高亮警示
+          if (secondsRemaining < 300) {
+            timerDisplay.className = 'text-lg sm:text-2xl font-mono font-bold text-white';
+            timerDisplay.parentElement.className = 'text-right flex items-center gap-2 bg-red-500 text-white px-2.5 py-1 rounded-lg animate-pulse';
+          } else {
+            timerDisplay.className = 'text-lg sm:text-2xl font-mono font-bold text-red-600';
+            timerDisplay.parentElement.className = 'text-right flex items-center gap-2 bg-red-50 text-red-600 px-2.5 py-1 rounded-lg';
+          }
         }
       }
 
-      // 生成 1-50 導覽面板
+      // 生成題號導覽面板
       function generateNavigationGrid() {
         navGrid.innerHTML = '';
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < activeQuestions.length; i++) {
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.id = `nav-btn-${i}`;
@@ -5988,7 +6054,7 @@
         const q = activeQuestions[currentIndex];
 
         // 重新繪製所有題號導覽按鈕，確保當前活動項與作答/標記狀態完全同步
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < activeQuestions.length; i++) {
           const btn = document.getElementById(`nav-btn-${i}`);
           if (btn) {
             const targetQ = activeQuestions[i];
@@ -5998,6 +6064,9 @@
 
         // 更新題目頂部資訊
         qNumSpan.textContent = String(currentIndex + 1).padStart(2, '0');
+        if (qTotalNumSpan) {
+          qTotalNumSpan.textContent = `/ ${activeQuestions.length}`;
+        }
         qSourceIdSpan.textContent = `題庫原始題號：#${q.id}`;
 
         // 更新題目文字
@@ -6119,9 +6188,9 @@
         }`;
 
         // 下一題按鈕
-        btnNext.disabled = currentIndex === 49;
+        btnNext.disabled = currentIndex === activeQuestions.length - 1;
         btnNext.className = `font-bold py-3 px-5 rounded-lg transition flex items-center gap-1.5 ${
-          currentIndex === 49 
+          currentIndex === activeQuestions.length - 1 
             ? 'bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed' 
             : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 shadow-sm'
         }`;
@@ -6180,13 +6249,13 @@
       });
 
       btnNext.addEventListener('click', () => {
-        if (currentIndex < 49) loadQuestion(currentIndex + 1);
+        if (currentIndex < activeQuestions.length - 1) loadQuestion(currentIndex + 1);
       });
 
       // 更新已答數顯示
       function updateAnsweredCount() {
         const answeredCount = activeQuestions.filter(q => q.userAnswer !== null).length;
-        answeredCountBadge.textContent = `已答: ${answeredCount} / 50`;
+        answeredCountBadge.textContent = `已答: ${answeredCount} / ${activeQuestions.length}`;
       }
 
       // 點擊交卷
@@ -6225,13 +6294,24 @@
         // 計算分數與時間
         const correctCount = activeQuestions.filter(q => q.userAnswer === q.answer).length;
         const incorrectQuestions = activeQuestions.filter(q => q.userAnswer !== q.answer);
-        const score = correctCount * 2;
+        const score = Math.round((correctCount / activeQuestions.length) * 100);
         const isPassed = score >= 85;
 
-        const secondsUsed = totalDurationSeconds - secondsRemaining;
-        const minutesUsed = Math.floor(secondsUsed / 60);
+        let secondsUsed = 0;
+        if (examMode === 'sequential') {
+          secondsUsed = secondsElapsed;
+        } else {
+          secondsUsed = totalDurationSeconds - secondsRemaining;
+        }
+        const hoursUsed = Math.floor(secondsUsed / 3600);
+        const minutesUsed = Math.floor((secondsUsed % 3600) / 60);
         const secUsed = secondsUsed % 60;
-        const timeSpentStr = `${minutesUsed} 分 ${secUsed} 秒`;
+        let timeSpentStr = '';
+        if (hoursUsed > 0) {
+          timeSpentStr = `${hoursUsed} 小時 ${minutesUsed} 分 ${secUsed} 秒`;
+        } else {
+          timeSpentStr = `${minutesUsed} 分 ${secUsed} 秒`;
+        }
 
         // 顯示結算頁面
         examScreen.classList.add('hidden');
@@ -6249,14 +6329,19 @@
         if (finalScoreDisplay) finalScoreDisplay.textContent = score;
         if (correctCountDisplay) correctCountDisplay.textContent = correctCount;
         
-        if (isPassed) {
-          scoreRing.style.stroke = '#22c55e'; // 綠色代表及格
+        const labelText = examMode === 'sequential' 
+          ? '順序練習已完成' 
+          : (examMode === 'wrong' ? '錯題複習完成' : (isPassed ? '模擬考及格' : '模擬考不及格'));
+
+        const isPassedOrSequential = isPassed || examMode === 'sequential' || examMode === 'wrong';
+        if (isPassedOrSequential) {
+          scoreRing.style.stroke = '#22c55e'; // 綠色代表及格或練習完成
           statusBadge.className = 'inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xl font-bold bg-green-50 text-green-700 border border-green-200';
-          statusBadge.innerHTML = '<i data-lucide="check-circle" class="w-6 h-6"></i> 模擬考及格';
+          statusBadge.innerHTML = `<i data-lucide="check-circle" class="w-6 h-6"></i> ${labelText}`;
         } else {
           scoreRing.style.stroke = '#ef4444'; // 紅色代表不及格
           statusBadge.className = 'inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xl font-bold bg-red-50 text-red-700 border border-red-200';
-          statusBadge.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6"></i> 模擬考不及格';
+          statusBadge.innerHTML = `<i data-lucide="x-circle" class="w-6 h-6"></i> ${labelText}`;
         }
 
         // 應試明細
@@ -6264,13 +6349,14 @@
         resultTimeSpent.textContent = timeSpentStr;
         
         const unansweredCount = activeQuestions.filter(q => q.userAnswer === null).length;
-        const wrongCount = 50 - correctCount - unansweredCount;
+        const wrongCount = activeQuestions.length - correctCount - unansweredCount;
         resultStatDetails.innerHTML = `答對 <span class="text-green-600 font-bold">${correctCount}</span> 題，答錯 <span class="text-red-600 font-bold">${wrongCount}</span> 題，未答 <span class="text-slate-500 font-bold">${unansweredCount}</span> 題`;
 
         // 儲存模擬考歷史紀錄到 localStorage
         const record = {
           id: Date.now().toString(),
           date: new Date().toLocaleString('zh-TW', { hour12: false }),
+          mode: examMode,
           score: score,
           correctCount: correctCount,
           wrongCount: wrongCount,
